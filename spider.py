@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import sys
 import threading
 import urllib
 
@@ -101,9 +102,27 @@ class Spider:
 
 # end
 
-homepage = 'https://example.com'
-output = urllib.parse.urlparse(homepage).netloc + '.txt'
+if len(sys.argv) != 2:
+	print('Правилна употреба: python3 spider.py [URL]')
+	sys.exit()
+# end
 
+url = sys.argv[1]
+parsed = urllib.parse.urlparse(url)
+
+if parsed.netloc == '':
+	print('Задати URL није валидан!')
+	sys.exit()
+# end
+
+output = parsed.netloc.replace('.', '_') + '.txt'
+print('Излазни фајл:', output)
+
+if parsed.scheme not in ['http', 'https']:
+	parsed.scheme = 'http'
+# end
+
+homepage = parsed.scheme + '://' + parsed.netloc
 spider = Spider(homepage)
 
 try:
