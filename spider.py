@@ -4,6 +4,7 @@ import sys
 import threading
 import urllib
 
+
 def get_page_source(url):
 	r = requests.get(url)
 
@@ -17,6 +18,7 @@ def get_page_source(url):
 
 	return r.text
 # end
+
 
 class Spider:
 
@@ -36,6 +38,11 @@ class Spider:
 		t2 = threading.Thread(target=self.job, name='S2')
 		t3 = threading.Thread(target=self.job, name='S3')
 		t4 = threading.Thread(target=self.job, name='S4')
+
+		t1.daemon = True
+		t2.daemon = True
+		t3.daemon = True
+		t4.daemon = True
 
 		t1.start()
 		t2.start()
