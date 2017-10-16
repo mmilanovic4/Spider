@@ -1,8 +1,8 @@
-from bs4 import BeautifulSoup
 import requests
 import sys
 import threading
 import urllib
+from bs4 import BeautifulSoup
 
 
 def get_page_source(url):
@@ -61,7 +61,7 @@ class Spider:
 				break
 			# end
 		# end
-		print('%s мртав!' % threading.current_thread().name)
+		print('%s is dead!' % threading.current_thread().name)
 	# end
 
 	def crawl(self):
@@ -77,9 +77,7 @@ class Spider:
 		print('%s: %s' % (threading.current_thread().name, link))
 		html = get_page_source(link)
 
-		if not html:
-			pass
-		else:
+		if html != False:
 			self.gather_links(html)
 		# end
 
@@ -88,7 +86,7 @@ class Spider:
 
 	def gather_links(self, html):
 		bs = BeautifulSoup(html, 'lxml')
-		for link in bs.findAll('a'):
+		for link in bs.find_all('a'):
 
 			if 'href' not in link.attrs:
 				continue
@@ -110,7 +108,7 @@ class Spider:
 # end
 
 if len(sys.argv) != 2:
-	print('Правилна употреба: python3 spider.py [URL]')
+	print('Usage: python3 spider.py [URL]')
 	sys.exit()
 # end
 
@@ -118,24 +116,25 @@ url = sys.argv[1]
 parsed = urllib.parse.urlparse(url)
 
 if parsed.netloc == '':
-	print('Задати URL није валидан!')
+	print('Invalid URL!')
 	sys.exit()
 # end
-
-output = parsed.netloc.replace('.', '_') + '.txt'
-print('Излазни фајл:', output)
 
 if parsed.scheme not in ['http', 'https']:
 	parsed.scheme = 'http'
 # end
 
 homepage = parsed.scheme + '://' + parsed.netloc
-spider = Spider(homepage)
+print('Target:', homepage)
+
+output = parsed.netloc.replace('.', '_') + '.txt'
+print('Results will be saved to:', output)
 
 try:
+	spider = Spider(homepage)
 	spider.start_workers()
-except:
-	pass
+except KeyboardInterrupt:
+	print('')
 finally:
 	links = sorted(spider.crawled)
 
@@ -145,6 +144,6 @@ finally:
 		# end
 	# end
 
-	print('Крај!')
+	print('END!')
 # end
 
