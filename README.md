@@ -6,6 +6,11 @@ Educational, open-source and multi-threaded website crawler written in Python, i
 
 Simply run **spider.py** using Python 3.x. You will also need to have **beautifulsoup4** module installed. Script takes target URL as a required argument:
 `python3 spider.py https://xkcd.com`
+You can also give script execute permission and execute it directly:
+```
+sudo chmod +x spider.py
+./spider.py https://xkcd.com
+```
 
 ## Links
 

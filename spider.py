@@ -1,3 +1,7 @@
+#!/usr/bin/python3
+#
+# Spider v1.0
+
 import requests
 import sys
 import threading
@@ -17,6 +21,17 @@ def get_page_source(url):
 	# end
 
 	return r.text
+# end
+
+
+def sorted_set_to_file(data, output_file):
+	data = sorted(data)
+
+	with open(output_file, 'w') as fw:
+		for row in data:
+			fw.write(row + '\n')
+		# end
+	# end
 # end
 
 
@@ -77,7 +92,7 @@ class Spider:
 		print('%s: %s' % (threading.current_thread().name, link))
 		html = get_page_source(link)
 
-		if html != False:
+		if html is not False:
 			self.gather_links(html)
 		# end
 
@@ -107,43 +122,53 @@ class Spider:
 
 # end
 
-if len(sys.argv) != 2:
-	print('Usage: python3 spider.py [URL]')
-	sys.exit()
+
+def usage():
+	print('Usage: python3 spider.py [URL]\n')
 # end
 
-url = sys.argv[1]
-parsed = urllib.parse.urlparse(url)
 
-if parsed.netloc == '':
-	print('Invalid URL!')
-	sys.exit()
-# end
+def main():
+	print('Spider v1.0\n')
 
-if parsed.scheme not in ['http', 'https']:
-	parsed.scheme = 'http'
-# end
-
-homepage = parsed.scheme + '://' + parsed.netloc
-print('Target:', homepage)
-
-output = parsed.netloc.replace('.', '_') + '.txt'
-print('Results will be saved to:', output)
-
-try:
-	spider = Spider(homepage)
-	spider.start_workers()
-except KeyboardInterrupt:
-	print('')
-finally:
-	links = sorted(spider.crawled)
-
-	with open(output, 'w') as fw:
-		for link in links:
-			fw.write(link + '\n')
-		# end
+	if len(sys.argv) != 2:
+		usage()
+		sys.exit(2)
 	# end
 
-	print('END!')
+	url = sys.argv[1]
+	parsed = urllib.parse.urlparse(url)
+
+	if not hasattr(parsed, 'scheme') or parsed.scheme not in ['http', 'https']:
+		print('Invalid URL: scheme missing\n')
+		sys.exit(2)
+	# end
+
+	if parsed.netloc == '':
+		print('Invalid URL: netloc missing\n')
+		sys.exit(2)
+	# end
+
+	homepage = parsed.scheme + '://' + parsed.netloc
+	print('Target: %s' % homepage)
+
+	output_file = parsed.netloc.replace('.', '_') + '.txt'
+	print('Results will be saved to: %s \n' % output_file)
+
+	try:
+		spider = Spider(homepage)
+		spider.start_workers()
+	except KeyboardInterrupt:
+		print('')
+	finally:
+		if 'spider' in locals() and hasattr(spider, 'crawled'):
+			sorted_set_to_file(spider.crawled, output_file)
+		# end
+		print('END!')
+	# end
+# end
+
+if __name__ == '__main__':
+	main()
 # end
 
