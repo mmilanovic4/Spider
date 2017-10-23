@@ -5,8 +5,26 @@
 import requests
 import sys
 import threading
+import time
 import urllib
 from bs4 import BeautifulSoup
+
+
+def timer(func):
+	if not callable(func):
+		return False
+	# end
+
+	def wrapper(*args, **kwargs):
+		t0 = time.time()
+		func(*args, **kwargs)
+
+		tt = time.time() - t0
+		print('Total running time: %.2f seconds.\n' % tt)
+	# end
+
+	return wrapper
+# end
 
 
 def get_page_source(url):
@@ -48,26 +66,19 @@ class Spider:
 		self.crawl()
 	# end
 
-	def start_workers(self):
-		t1 = threading.Thread(target=self.job, name='S1')
-		t2 = threading.Thread(target=self.job, name='S2')
-		t3 = threading.Thread(target=self.job, name='S3')
-		t4 = threading.Thread(target=self.job, name='S4')
+	def start_workers(self, total=8):
+		threads = []
 
-		t1.daemon = True
-		t2.daemon = True
-		t3.daemon = True
-		t4.daemon = True
+		for x in range(1, 1 + total):
+			t = threading.Thread(target=self.job, name='S' + str(x))
+			t.daemon = True
+			t.start()
+			threads.append(t)
+		# end
 
-		t1.start()
-		t2.start()
-		t3.start()
-		t4.start()
-
-		t1.join()
-		t2.join()
-		t3.join()
-		t4.join()
+		for t in threads:
+			t.join()
+		# end
 	# end
 
 	def job(self):
@@ -128,6 +139,7 @@ def usage():
 # end
 
 
+@timer
 def main():
 	print('Spider v1.0\n')
 
