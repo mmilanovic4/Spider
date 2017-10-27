@@ -19,7 +19,6 @@ def timer(func):
 	def wrapper(*args, **kwargs):
 		t0 = time.time()
 		func(*args, **kwargs)
-
 		tt = time.time() - t0
 		print('Total running time: %.2f seconds.\n' % tt)
 	# end
@@ -162,6 +161,12 @@ def main():
 
 	try:
 		spider = Spider(homepage)
+
+		# Collect some queue links so threads won't die immediately
+		for i in range(3):
+			spider.crawl()
+		# end
+
 		spider.start_workers()
 	except KeyboardInterrupt:
 		print('')

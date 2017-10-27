@@ -11,6 +11,7 @@ You can also give script execute permission and execute it directly:
 sudo chmod +x spider.py
 ./spider.py https://xkcd.com
 ```
+Once done, all crawled links will be saved in a file. For checking number of crawled links I like to use GNU **wc** utility: `wc --lines xkcd_com.txt`.
 
 ## Links
 
