@@ -2,12 +2,12 @@
 #
 # Spider v1.0
 
+import lxml.html as LH
 import requests
 import sys
 import threading
 import time
 import urllib
-from bs4 import BeautifulSoup
 
 
 def timer(func):
@@ -110,14 +110,14 @@ class Spider:
 	# end
 
 	def gather_links(self, html):
-		bs = BeautifulSoup(html, 'lxml')
-		for link in bs.find_all('a'):
+		doc = LH.fromstring(html)
+		for link in doc.xpath('//a'):
 
-			if 'href' not in link.attrs:
+			if 'href' not in link.attrib:
 				continue
 			# end
 
-			link = urllib.parse.urljoin(self.homepage, link.attrs['href'])
+			link = urllib.parse.urljoin(self.homepage, link.attrib['href'])
 			if len(link.split(self.homepage)) < 2:
 				continue
 			# end
