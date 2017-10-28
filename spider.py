@@ -2,7 +2,6 @@
 #
 # Spider v1.0
 
-import queue
 import requests
 import sys
 import threading
@@ -56,12 +55,13 @@ def sorted_set_to_file(data, output_file):
 class Spider:
 
 	def __init__(self, homepage):
-		self.links = queue.Queue()
+		self.links = set()
 		self.crawled = set()
 
 		self.homepage = homepage
-		self.links.put(homepage)
+		self.links.add(homepage)
 
+		self.lock = threading.Lock()
 		self.crawl()
 	# end
 
@@ -82,8 +82,7 @@ class Spider:
 
 	def job(self):
 		while True:
-			self.crawl()
-			if self.links.empty():
+			if not self.crawl():
 				break
 			# end
 		# end
@@ -91,8 +90,14 @@ class Spider:
 	# end
 
 	def crawl(self):
-		link = self.links.get()
-		self.crawled.add(link)
+		with self.lock:
+			if len(self.links) == 0:
+				return False
+			else:
+				link = self.links.pop()
+				self.crawled.add(link)
+			# end
+		# end
 
 		print('%s: %s' % (threading.current_thread().name, link))
 		html = get_page_source(link)
@@ -100,6 +105,8 @@ class Spider:
 		if html is not False:
 			self.gather_links(html)
 		# end
+
+		return True
 	# end
 
 	def gather_links(self, html):
@@ -115,11 +122,12 @@ class Spider:
 				continue
 			# end
 
-			if link in self.crawled:
-				continue
+			with self.lock:
+				if link in self.crawled:
+					continue
+				# end
+				self.links.add(link)
 			# end
-
-			self.links.put(link)
 		# end
 	# end
 
@@ -163,7 +171,7 @@ def main():
 		spider = Spider(homepage)
 
 		# Collect some queue links so threads won't die immediately
-		for i in range(3):
+		for i in range(5):
 			spider.crawl()
 		# end
 
