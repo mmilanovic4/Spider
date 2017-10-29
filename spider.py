@@ -26,8 +26,12 @@ def timer(func):
 # end
 
 
-def get_page_source(url):
-	r = requests.get(url)
+def get_page_source(url, fua=True):
+	headers = {}
+	if fua:
+		headers['User-Agent'] = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0'
+	# end
+	r = requests.get(url, headers=headers)
 
 	if r.status_code != 200:
 		return False
