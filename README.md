@@ -24,4 +24,3 @@ wc --lines xkcd_com.txt
 
 - Ryan Mitchell, Web Scraping with Python - O'Reilly Media, 2015.
 - [Python Web Crawler Tutorials](https://www.youtube.com/playlist?list=PL6gx4Cwl9DGA8Vys-f48mAH9OKSUyav0q)
-

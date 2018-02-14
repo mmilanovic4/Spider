@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #
-# Spider v1.0
+# Multi-threaded website crawler written in Python.
 
 import argparse
 import lxml.html as LH
@@ -28,8 +28,9 @@ def timer(func):
 
 
 def get_page_source(url):
-	headers = {}
-	headers['User-Agent'] = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0'
+	headers = {
+		'User-Agent' : 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:58.0) Gecko/20100101 Firefox/58.0'
+	}
 
 	try:
 		r = requests.get(url, headers=headers)
@@ -110,8 +111,10 @@ class Spider:
 		print('%s: %s' % (threading.current_thread().name, link))
 		html = get_page_source(link)
 
-		if html is not False:
+		try:
 			self.gather_links(html)
+		except:
+			pass
 		# end
 
 		return True
@@ -145,7 +148,7 @@ class Spider:
 @timer
 def main():
 	parser = argparse.ArgumentParser(
-		description='Spider v1.0'
+		description='Multi-threaded website crawler written in Python.'
 	)
 	parser.add_argument(
 		'-u',
@@ -197,4 +200,3 @@ def main():
 if __name__ == '__main__':
 	main()
 # end
-
