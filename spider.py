@@ -2,6 +2,7 @@
 #
 # Spider v1.0
 
+import argparse
 import lxml.html as LH
 import requests
 import sys
@@ -26,22 +27,25 @@ def timer(func):
 # end
 
 
-def get_page_source(url, fua=True):
+def get_page_source(url):
 	headers = {}
-	if fua:
-		headers['User-Agent'] = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0'
-	# end
-	r = requests.get(url, headers=headers)
+	headers['User-Agent'] = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:56.0) Gecko/20100101 Firefox/56.0'
 
-	if r.status_code != 200:
+	try:
+		r = requests.get(url, headers=headers)
+
+		if r.status_code != 200:
+			return False
+		# end
+
+		if len(r.headers['content-type'].split('text/html')) < 2:
+			return False
+		# end
+
+		return r.text
+	except:
 		return False
 	# end
-
-	if len(r.headers['content-type'].split('text/html')) < 2:
-		return False
-	# end
-
-	return r.text
 # end
 
 
@@ -138,22 +142,22 @@ class Spider:
 # end
 
 
-def usage():
-	print('Usage: python3 spider.py [URL]\n')
-# end
-
-
 @timer
 def main():
-	print('Spider v1.0\n')
+	parser = argparse.ArgumentParser(
+		description='Spider v1.0'
+	)
+	parser.add_argument(
+		'-u',
+		'--url',
+		action='store',
+		dest='url',
+		help='Target website',
+		required=True
+	)
 
-	if len(sys.argv) != 2:
-		usage()
-		sys.exit(2)
-	# end
-
-	url = sys.argv[1]
-	parsed = urllib.parse.urlparse(url)
+	args = parser.parse_args()
+	parsed = urllib.parse.urlparse(args.url)
 
 	if not hasattr(parsed, 'scheme') or parsed.scheme not in ['http', 'https']:
 		print('Invalid URL: scheme missing\n')
