@@ -3,12 +3,12 @@
 # Multi-threaded website crawler written in Python.
 
 import argparse
-import lxml.html as LH
+import lxml.html as lh
 import requests
 import sys
 import threading
 import time
-import urllib
+import urllib.parse as up
 
 
 def timer(func):
@@ -29,7 +29,7 @@ def timer(func):
 
 def get_page_source(url):
 	headers = {
-		'User-Agent' : 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:58.0) Gecko/20100101 Firefox/58.0'
+		'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:58.0) Gecko/20100101 Firefox/58.0'
 	}
 
 	try:
@@ -121,14 +121,14 @@ class Spider:
 	# end
 
 	def gather_links(self, html):
-		doc = LH.fromstring(html)
+		doc = lh.fromstring(html)
 		for link in doc.xpath('//a'):
 
 			if 'href' not in link.attrib:
 				continue
 			# end
 
-			link = urllib.parse.urljoin(self.homepage, link.attrib['href'])
+			link = up.urljoin(self.homepage, link.attrib['href'])
 			if len(link.split(self.homepage)) < 2:
 				continue
 			# end
@@ -160,7 +160,7 @@ def main():
 	)
 
 	args = parser.parse_args()
-	parsed = urllib.parse.urlparse(args.url)
+	parsed = up.urlparse(args.url)
 
 	if not hasattr(parsed, 'scheme') or parsed.scheme not in ['http', 'https']:
 		print('Invalid URL: scheme missing\n')
