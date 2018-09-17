@@ -29,7 +29,7 @@ def timer(func):
 
 def get_page_source(url):
 	headers = {
-		'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:58.0) Gecko/20100101 Firefox/58.0'
+		'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:62.0) Gecko/20100101 Firefox/62.0'
 	}
 
 	try:
@@ -74,7 +74,7 @@ class Spider:
 		self.crawl()
 	# end
 
-	def start_workers(self, total=32):
+	def start_workers(self, total=16):
 		threads = []
 
 		for x in range(1, 1 + total):
@@ -160,29 +160,29 @@ def main():
 	)
 
 	args = parser.parse_args()
-	parsed = up.urlparse(args.url)
+	parsed_url = up.urlparse(args.url)
 
-	if not hasattr(parsed, 'scheme') or parsed.scheme not in ['http', 'https']:
+	if not hasattr(parsed_url, 'scheme') or parsed_url.scheme not in ['http', 'https']:
 		print('Invalid URL: scheme missing\n')
 		sys.exit(2)
 	# end
 
-	if parsed.netloc == '':
+	if parsed_url.netloc == '':
 		print('Invalid URL: netloc missing\n')
 		sys.exit(2)
 	# end
 
-	homepage = parsed.scheme + '://' + parsed.netloc
+	homepage = parsed_url.scheme + '://' + parsed_url.netloc
 	print('Target: %s' % homepage)
 
-	output_file = parsed.netloc.replace('.', '_') + '.txt'
+	output_file = parsed_url.netloc.replace('.', '_') + '.txt'
 	print('Results will be saved to: %s \n' % output_file)
 
 	try:
 		spider = Spider(homepage)
 
 		# Collect some queue links so threads won't die immediately
-		for i in range(5):
+		for _ in range(10):
 			spider.crawl()
 		# end
 
