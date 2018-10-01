@@ -4,7 +4,7 @@ Educational, open-source and multi-threaded website crawler written in Python, i
 
 ## Usage
 
-Simply run **spider.py** using Python 3.x. Script takes target URL as a required argument:
+Simply run `spider.py` using Python 3.x. Script takes target URL as a required argument:
 ```
 python3 spider.py https://xkcd.com
 ```
@@ -15,7 +15,7 @@ sudo chmod +x spider.py
 clear && ./spider.py https://xkcd.com
 ```
 
-Once done, all crawled links will be saved in a file. For checking number of crawled links I like to use GNU **wc** utility:
+Once done, all crawled links will be saved in a file. For checking number of crawled links I like to use GNU `wc` utility:
 ```
 wc --lines xkcd_com.txt
 ```
