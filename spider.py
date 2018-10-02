@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #
-# Multi-threaded website crawler written in Python.
+# Multi-threaded website crawler written in Python
 
 import argparse
 import lxml.html as lh
@@ -181,7 +181,7 @@ def main():
 	try:
 		spider = Spider(homepage)
 
-		# Collect some queue links so threads won't die immediately
+		# Collect some links so threads won't die immediately
 		for _ in range(10):
 			spider.crawl()
 		# end
