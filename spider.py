@@ -1,17 +1,18 @@
 #!/usr/bin/python3
-#
-# Multi-threaded website crawler written in Python
+"""Multi-threaded website crawler written in Python."""
 
 import argparse
-import lxml.html as lh
-import requests
 import sys
 import threading
 import time
-import urllib.parse as up
+import urllib.parse as urllib_parse
+
+from bs4 import BeautifulSoup
+import requests
 
 
 def timer(func):
+	"""Measure the execution time of the script."""
 	if not callable(func):
 		return False
 	# end
@@ -28,6 +29,7 @@ def timer(func):
 
 
 def get_page_source(url):
+	"""Fetch HTML from a web page."""
 	headers = {
 		'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:62.0) Gecko/20100101 Firefox/62.0'
 	}
@@ -51,6 +53,7 @@ def get_page_source(url):
 
 
 def sorted_set_to_file(data, output_file):
+	"""Write content of a set to the file."""
 	data = sorted(data)
 
 	with open(output_file, 'w') as fw:
@@ -62,8 +65,10 @@ def sorted_set_to_file(data, output_file):
 
 
 class Spider:
+	"""Spider class."""
 
 	def __init__(self, homepage):
+		"""Constructor."""
 		self.links = set()
 		self.crawled = set()
 
@@ -75,6 +80,7 @@ class Spider:
 	# end
 
 	def start_workers(self, total=16):
+		"""Start the threads."""
 		threads = []
 
 		for x in range(1, 1 + total):
@@ -90,6 +96,7 @@ class Spider:
 	# end
 
 	def job(self):
+		"""Thread's callback."""
 		while True:
 			if not self.crawl():
 				break
@@ -99,6 +106,7 @@ class Spider:
 	# end
 
 	def crawl(self):
+		"""Pop link from the links stack and start crawling."""
 		with self.lock:
 			if len(self.links) == 0:
 				return False
@@ -121,14 +129,16 @@ class Spider:
 	# end
 
 	def gather_links(self, html):
-		doc = lh.fromstring(html)
-		for link in doc.xpath('//a'):
+		"""Find all links from the HTML and add them to the links stack, if they're not crawled already."""
+		bs = BeautifulSoup(html, 'lxml')
 
-			if 'href' not in link.attrib:
+		for link in bs.find_all('a'):
+
+			if 'href' not in link.attrs:
 				continue
 			# end
 
-			link = up.urljoin(self.homepage, link.attrib['href'])
+			link = urllib_parse.urljoin(self.homepage, link.attrs['href'])
 			if len(link.split(self.homepage)) < 2:
 				continue
 			# end
@@ -160,7 +170,7 @@ def main():
 	)
 
 	args = parser.parse_args()
-	parsed_url = up.urlparse(args.url)
+	parsed_url = urllib_parse.urlparse(args.url)
 
 	if not hasattr(parsed_url, 'scheme') or parsed_url.scheme not in ['http', 'https']:
 		print('Invalid URL: scheme missing\n')

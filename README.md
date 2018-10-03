@@ -1,6 +1,11 @@
 # Overview
 
-Educational, open-source and multi-threaded website crawler written in Python, inspired by [thenewboston](https://github.com/buckyroberts/Spider). It looks for internal links only - subdomains are excluded. However, this and number of threads could be tweaked easily.
+An educational, open-source and multi-threaded website crawler written in Python 3, inspired by [thenewboston](https://github.com/buckyroberts/Spider). It looks for internal links only - subdomains are excluded. However, this and number of threads could be tweaked easily.
+
+## Requirements
+
+- Beautiful Soup (python3-bs4)
+- Requests (python3-requests)
 
 ## Usage
 

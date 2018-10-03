@@ -1,2 +1,6 @@
 # Ignore spider results
 *.txt
+
+# Ignore Python bytecode cache
+__pycache__/
+*.pyc
