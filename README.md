@@ -4,20 +4,20 @@ An educational, open-source and multi-threaded website crawler written in Python
 
 ## Requirements
 
-- Beautiful Soup (python3-bs4)
-- Requests (python3-requests)
+- Beautiful Soup (`python3-bs4`)
+- Requests (`python3-requests`)
 
 ## Usage
 
 Simply run `spider.py` using Python 3.x. Script takes target URL as a required argument:
 ```
-python3 spider.py https://xkcd.com
+python3 spider.py --url https://xkcd.com
 ```
 
 You can also give script execute permission and execute it directly:
 ```
 sudo chmod +x spider.py
-clear && ./spider.py https://xkcd.com
+clear && ./spider.py --url https://xkcd.com
 ```
 
 Once done, all crawled links will be saved in a file. For checking number of crawled links I like to use GNU `wc` utility:
